@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سوق الفلاحين - منتجات طازجة من المزارع المحلية</title>
+
+    <!-- Google Fonts (Best Practice) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
-        
+        /* The Tajawal font is now loaded via <link> tag in the head */
         body {
             font-family: 'Tajawal', sans-serif;
         }
@@ -770,17 +775,23 @@
             document.body.style.overflow = 'hidden';
         });
         
-        closeCartBtn.addEventListener('click', () => {
+        const closeCart = () => {
             cartSidebar.classList.add('translate-x-full');
-            overlay.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        });
-        
-        overlay.addEventListener('click', () => {
-            cartSidebar.classList.add('translate-x-full');
-            overlay.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        });
+            if (authModal.classList.contains('hidden')) { // Only hide overlay if auth modal is also hidden
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        const closeAuth = () => {
+            authModal.classList.add('hidden');
+            if (cartSidebar.classList.contains('translate-x-full')) { // Only hide overlay if cart is also hidden
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        closeCartBtn.addEventListener('click', closeCart);
         
         // Add to Cart
         addToCartButtons.forEach(button => {
@@ -845,7 +856,7 @@
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = `
                     <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-shopping-cart text-4xl mb-2</i>
+                        <i class="fas fa-shopping-cart text-4xl mb-2"></i>
                         <p>سلة التسوق فارغة</p>
                     </div>
                 `;
@@ -898,6 +909,11 @@
                             item.quantity -= 1;
                             localStorage.setItem('cart', JSON.stringify(cart));
                             updateCartUI();
+                        } else if (item && item.quantity === 1) {
+                            // Optionally, remove the item if quantity becomes 0
+                            cart = cart.filter(item => item.id !== productId);
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                            updateCartUI();
                         }
                     });
                 });
@@ -914,7 +930,7 @@
             
             // Update totals
             const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-            const deliveryFee = 10.00;
+            const deliveryFee = subtotal > 0 ? 10.00 : 0; // Only add delivery fee if cart is not empty
             const grandTotal = subtotal + deliveryFee;
             
             cartTotal.textContent = `${subtotal.toFixed(2)} ر.س`;
@@ -956,16 +972,12 @@
             document.body.style.overflow = 'hidden';
         });
         
-        closeAuthBtn.addEventListener('click', () => {
-            authModal.classList.add('hidden');
-            overlay.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        });
+        closeAuthBtn.addEventListener('click', closeAuth);
         
+        // Overlay logic to close both modals
         overlay.addEventListener('click', () => {
-            authModal.classList.add('hidden');
-            overlay.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            closeCart();
+            closeAuth();
         });
         
         loginTab.addEventListener('click', () => {
