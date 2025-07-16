@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سوق المزارعين - فواكه وخضروات طازجة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .hero-section {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-btn.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- شريط التنقل -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <a href="#" class="flex items-center">
+                        <i class="fas fa-leaf text-green-600 text-2xl"></i>
+                        <span class="text-xl font-bold text-green-600 mr-2">سوق المزارعين</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6 space-x-reverse">
+                    <a href="#products" class="text-gray-700 hover:text-green-600">المنتجات</a>
+                    <a href="#farmers" class="text-gray-700 hover:text-green-600">المزارعون</a>
+                    <a href="#about" class="text-gray-700 hover:text-green-600">عنّا</a>
+                    <a href="#contact" class="text-gray-700 hover:text-green-600">اتصل بنا</a>
+                </div>
+                
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <button id="cart-btn" class="relative">
+                        <i class="fas fa-shopping-cart text-gray-700 text-xl hover:text-green-600"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                    
+                    <a href="#" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                        <i class="fas fa-user mr-2"></i>تسجيل الدخول
+                    </a>
+                    
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- قائمة الجوال -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <a href="#products" class="block py-2 px-4 text-gray-700 hover:bg-gray-100">المنتجات</a>
+                <a href="#farmers" class="block py-2 px-4 text-gray-700 hover:bg-gray-100">المزارعون</a>
+                <a href="#about" class="block py-2 px-4 text-gray-700 hover:bg-gray-100">عنّا</a>
+                <a href="#contact" class="block py-2 px-4 text-gray-700 hover:bg-gray-100">اتصل بنا</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- سلة التسوق -->
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-bold">سلة التسوق</h3>
+            <button id="close-cart" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div id="cart-items" class="p-4">
+            <!-- سيتم إضافة العناصر هنا عبر JavaScript -->
+            <p class="text-gray-500 text-center py-8">سلة التسوق فارغة</p>
+        </div>
+        
+        <div class="p-4 border-t border-gray-200">
+            <div class="flex justify-between mb-4">
+                <span class="font-bold">المجموع:</span>
+                <span id="cart-total" class="font-bold">0.00 د.م</span>
+            </div>
+            <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                اتمام الشراء
+            </button>
+        </div>
+    </div>
+
+    <!-- القسم الرئيسي -->
+    <section class="hero-section text-white py-20 md:py-32">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">فواكه وخضروات طازجة من المزارع مباشرة</h1>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">تسوق أفضل المنتجات الزراعية الطازجة مباشرة من المزارعين المحليين بأسعار تنافسية وجودة عالية</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#products" class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition duration-300">تصفح المنتجات</a>
+                <a href="#" class="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition duration-300">كن بائعًا</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- مميزات الموقع -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6 rounded-lg bg-gray-50">
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">توصيل سريع</h3>
+                    <p class="text-gray-600">توصيل خلال 24-48 ساعة مع الحفاظ على جودة المنتج</p>
+                </div>
+                
+                <div class="text-center p-6 rounded-lg bg-gray-50">
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">منتجات عضوية</h3>
+                    <p class="text-gray-600">منتجات طبيعية وخالية من المواد الكيميائية الضارة</p>
+                </div>
+                
+                <div class="text-center p-6 rounded-lg bg-gray-50">
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">أسعار تنافسية</h3>
+                    <p class="text-gray-600">أسعار منافسة بدون وسطاء لصالح المزارع والمستهلك</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- تصنيفات المنتجات -->
+    <section class="py-8 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto pb-4 space-x-2 space-x-reverse">
+                <button class="category-btn active px-4 py-2 rounded-full bg-green-600 text-white whitespace-nowrap">الكل</button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 whitespace-nowrap">الفواكه</button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 whitespace-nowrap">الخضروات</button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 whitespace-nowrap">الموالح</button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 whitespace-nowrap">المنتجات الموسمية</button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 whitespace-nowrap">الأعشاب</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- المنتجات -->
+    <section id="products" class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">منتجاتنا الطازجة</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- المنتج 1 -->
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="طماطم" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">جديد</div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg">طماطم عضوية</h3>
+                            <span class="text-green-600 font-bold">12.50 د.م/كغ</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-1">من مزرعة أحمد بمنطقة سطات</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">50 كم من موقعك</span>
+                        </div>
+                        <button class="add-to-cart mt-4 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300" data-id="1" data-name="طماطم عضوية" data-price="12.50" data-image="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80">
+                            أضف إلى السلة
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- المنتج 2 -->
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="تفاح" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">الأكثر مبيعًا</div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg">تفاح أحمر</h3>
+                            <span class="text-green-600 font-bold">18.00 د.م/كغ</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-1">من مزرعة محمد بمنطقة إفران</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">120 كم من موقعك</span>
+                        </div>
+                        <button class="add-to-cart mt-4 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300" data-id="2" data-name="تفاح أحمر" data-price="18.00" data-image="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80">
+                            أضف إلى السلة
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- المنتج 3 -->
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80" alt="خس" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg">خس أخضر</h3>
+                            <span class="text-green-600 font-bold">8.00 د.م/وحدة</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-1">من مزرعة فاطمة بمنطقة بنسليمان</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">30 كم من موقعك</span>
+                        </div>
+                        <button class="add-to-cart mt-4 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300" data-id="3" data-name="خس أخضر" data-price="8.00" data-image="https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80">
+                            أضف إلى السلة
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- المنتج 4 -->
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=702&q=80" alt="برتقال" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">عرض خاص</div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg">برتقال عضوي</h3>
+                            <span class="text-green-600 font-bold">10.50 د.م/كغ</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-1">من مزرعة حسن بمنطقة برشيد</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">45 كم من موقعك</span>
+                        </div>
+                        <button class="add-to-cart mt-4 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300" data-id="4" data-name="برتقال عضوي" data-price="10.50" data-image="https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=702&q=80">
+                            أضف إلى السلة
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <a href="#" class="inline-block border border-green-600 text-green-600 px-6 py-2 rounded-lg hover:bg-green-600 hover:text-white transition duration-300">
+                    عرض المزيد
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- كيف يعمل الموقع -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">كيف يعمل موقعنا؟</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-white rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <i class="fas fa-search text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">تصفح المنتجات</h3>
+                    <p class="text-gray-600">تصفح تشكيلتنا الواسعة من الفواكه والخضروات الطازجة المزروعة محليًا</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-white rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <i class="fas fa-shopping-cart text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">أضف إلى السلة</h3>
+                    <p class="text-gray-600">اختر المنتجات التي تريدها وأضفها إلى سلة التسوق الخاصة بك</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-white rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <i class="fas fa-truck text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">استلم طلبك</h3>
+                    <p class="text-gray-600">اختر طريقة الدفع المناسبة واستلم طلبك في الوقت المحدد</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- المزارعون المحليون -->
+    <section id="farmers" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">تعرف على مزارعينا</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- مزارع 1 -->
+                <div class="bg-gray-50 rounded-lg overflow-hidden shadow-md">
+                    <img src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="مزارع" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">أحمد الزراعي</h3>
+                        <p class="text-gray-600 text-sm">مزارع خضروات عضوية منذ 15 سنة</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">سطات</span>
+                        </div>
+                        <div class="flex mt-3">
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">طماطم</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">خيار</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">فلفل</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- مزارع 2 -->
+                <div class="bg-gray-50 rounded-lg overflow-hidden shadow-md">
+                    <img src="https://images.unsplash.com/photo-1549318581-ec37ba9f8ca0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="مزارع" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">محمد الفلاح</h3>
+                        <p class="text-gray-600 text-sm">متخصص في زراعة الفواكه</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">إفران</span>
+                        </div>
+                        <div class="flex mt-3">
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">تفاح</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">كمثرى</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">خوخ</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- مزارع 3 -->
+                <div class="bg-gray-50 rounded-lg overflow-hidden shadow-md">
+                    <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="مزارع" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">فاطمة الزراعية</h3>
+                        <p class="text-gray-600 text-sm">خبيرة في الزراعة العضوية</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">بنسليمان</span>
+                        </div>
+                        <div class="flex mt-3">
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">خس</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">سبانخ</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">بقدونس</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- مزارع 4 -->
+                <div class="bg-gray-50 rounded-lg overflow-hidden shadow-md">
+                    <img src="https://images.unsplash.com/photo-1605007493699-af65885f8bb7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="مزارع" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">حسن المزارع</h3>
+                        <p class="text-gray-600 text-sm">متخصص في الحمضيات</p>
+                        <div class="flex items-center mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-sm mr-1"></i>
+                            <span class="text-gray-500 text-sm">برشيد</span>
+                        </div>
+                        <div class="flex mt-3">
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">برتقال</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">ليمون</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">جريب فروت</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <a href="#" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300">
+                    انضم كبائع
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- آراء العملاء -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">آراء عملائنا</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- رأي 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm">منذ أسبوع</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"المنتجات طازجة جدًا ولذيذة، والتوصيل كان سريعًا. سأطلب بالتأكيد مرة أخرى!"</p>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="عميل" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-bold">سارة</h4>
+                            <p class="text-gray-500 text-sm">الدار البيضاء</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- رأي 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm">منذ 3 أيام</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"أحب دعم المزارعين المحليين، والمنتجات هنا ذات جودة عالية بأسعار معقولة."</p>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="عميل" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-bold">عمر</h4>
+                            <p class="text-gray-500 text-sm">الرباط</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- رأي 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm">منذ شهر</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"خدمة ممتازة ومنتجات طازجة. أحب أن أعرف مصدر طعامي وأشجع الزراعة المحلية."</p>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="عميل" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-bold">أمينة</h4>
+                            <p class="text-gray-500 text-sm">مراكش</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- اشترك في النشرة البريدية -->
+    <section class="py-12 bg-green-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">اشترك في نشرتنا البريدية</h2>
+            <p class="text-xl mb-6 max-w-2xl mx-auto">احصل على عروض خاصة وتحديثات حول المنتجات الموسمية الجديدة</p>
+            
+            <form class="max-w-md mx-auto flex">
+                <input type="email" placeholder="بريدك الإلكتروني" class="flex-grow px-4 py-3 rounded-r-lg focus:outline-none text-gray-900">
+                <button type="submit" class="bg-green-800 px-6 py-3 rounded-l-lg hover:bg-green-900 transition duration-300">
+                    اشتراك
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- تذييل الصفحة -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-leaf text-green-600 mr-2"></i>
+                        سوق المزارعين
+                    </h3>
+                    <p class="text-gray-400">منصة تربط بين المزارعين المحليين والمستهلكين مباشرة لتوفير منتجات طازجة بجودة عالية.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">الصفحة الرئيسية</a></li>
+                        <li><a href="#products" class="text-gray-400 hover:text-white transition duration-300">المنتجات</a></li>
+                        <li><a href="#farmers" class="text-gray-400 hover:text-white transition duration-300">المزارعون</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">تسجيل الدخول</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">انضم كبائع</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">تواصل معنا</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-phone text-green-600 mr-2"></i>
+                            <span class="text-gray-400">+212 6 12 34 56 78</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope text-green-600 mr-2"></i>
+                            <span class="text-gray-400">info@souqalmazareen.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-green-600 mr-2"></i>
+                            <span class="text-gray-400">الدار البيضاء، المغرب</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">تابعنا</h4>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="bg-gray-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-600 transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="bg-gray-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-600 transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="bg-gray-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-600 transition duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="bg-gray-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-600 transition duration-300">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                    
+                    <h4 class="text-lg font-bold mt-6 mb-4">طرق الدفع</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="bg-gray-800 px-3 py-1 rounded text-sm">الدفع عند الاستلام</div>
+                        <div class="bg-gray-800 px-3 py-1 rounded text-sm">بطاقة ائتمان</div>
+                        <div class="bg-gray-800 px-3 py-1 rounded text-sm">حوالة بنكية</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2023 سوق المزارعين. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // قائمة الجوال
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // سلة التسوق
+        const cartBtn = document.getElementById('cart-btn');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const closeCart = document.getElementById('close-cart');
+        const cartItems = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const cartTotal = document.getElementById('cart-total');
+        
+        let cart = [];
+        
+        cartBtn.addEventListener('click', function() {
+            cartSidebar.classList.remove('translate-x-full');
+        });
+        
+        closeCart.addEventListener('click', function() {
+            cartSidebar.classList.add('translate-x-full');
+        });
+        
+        // تصنيفات المنتجات
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // إضافة إلى السلة
+        const addToCartBtns = document.querySelectorAll('.add-to-cart');
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const price = parseFloat(this.getAttribute('data-price'));
+                const image = this.getAttribute('data-image');
+                
+                // التحقق إذا كان المنتج موجودًا بالفعل في السلة
+                const existingItem = cart.find(item => item.id === id);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id,
+                        name,
+                        price,
+                        image,
+                        quantity: 1
+                    });
+                }
+                
+                updateCart();
+                
+                // عرض رسالة تأكيد
+                alert(`تمت إضافة ${name} إلى سلة التسوق`);
+            });
+        });
+        
+        function updateCart() {
+            // تحديث عدد العناصر في السلة
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // تحديث إجمالي السعر
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = totalPrice.toFixed(2) + ' د.م';
+            
+            // تحديث عناصر السلة
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-gray-500 text-center py-8">سلة التسوق فارغة</p>';
+            } else {
+                cartItems.innerHTML = '';
+                cart.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item flex items-center py-4 border-b border-gray-200';
+                    cartItem.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
+                        <div class="mr-4 flex-grow">
+                            <h4 class="font-bold">${item.name}</h4>
+                            <p class="text-gray-600">${item.price.toFixed(2)} د.م × ${item.quantity}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="remove-item text-red-500 hover:text-red-700" data-id="${item.id}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <span class="mr-4 font-bold">${(item.price * item.quantity).toFixed(2)} د.م</span>
+                        </div>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+                
+                // إضافة حدث إزالة العنصر
+                document.querySelectorAll('.remove-item').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        cart = cart.filter(item => item.id !== id);
+                        updateCart();
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
